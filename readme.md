@@ -8,14 +8,117 @@
 | 2      | Angela Oryza Prabowo          | 5025201022 |
 | 3      | Helmi Taqiyuddin | 5025201152 |
 
-``` IP Kelompok F03 = ``` 
+``` IP Kelompok F03 = 10.30``` 
 
 
 ## 1
 > WISE akan dijadikan sebagai DNS Master, Berlint akan dijadikan DNS Slave, dan Eden akan digunakan sebagai Web Server. Terdapat 2 Client yaitu SSS, dan Garden. Semua node terhubung pada router Ostania, sehingga dapat mengakses internet (1).
 
+**Router network configuration Ostania:**
 
+auto eth0
+iface eth0 inet dhcp
+```
+auto eth1
+iface eth1 inet static
+	address 10.30.1.1
+	netmask 255.255.255.0
+
+auto eth2
+iface eth2 inet static
+	address 10.30.2.1
+	netmask 255.255.255.0
+
+auto eth3
+iface eth3 inet static
+	address 10.30.3.1
+	netmask 255.255.255.0
+```
+
+iptables setup:
+```
+iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 10.30.0.0/16
+```
+
+
+**DNS master network configuration WISE:**
+```
+auto eth0
+iface eth0 inet static
+	address 10.30.2.2
+	netmask 255.255.255.0
+	gateway 10.30.2.1
+```
+
+Instal bind9:
+```
+apt update
+apt install bind9 -y
+```
+
+
+**DNS slave network configuration Berlint:**
+```
+auto eth0
+iface eth0 inet static
+	address 10.30.3.2
+	netmask 255.255.255.0
+	gateway 10.30.3.1
+```
+
+Instal bind9:
+```
+apt update
+apt install bind9 -y
+```
+
+
+**Web server network configuration Eden:**
 ## 2
+```
+auto eth0
+iface eth0 inet static
+	address 10.30.3.3
+	netmask 255.255.255.0
+	gateway 10.30.3.1
+```
+
+
+**Client network configuration SSS:**
+```
+auto eth0
+iface eth0 inet static
+	address 10.30.1.2
+	netmask 255.255.255.0
+	gateway 10.30.1.1
+```
+
+Instal dnsutils:
+```
+apt update
+apt install dnsutils -y
+```
+
+
+**Client network configuration Gardent :**
+```
+auto eth0
+iface eth0 inet static
+	address 10.30.1.3
+	netmask 255.255.255.0
+	gateway 110.30.1.1
+```
+
+Instal dnsutils:
+
+```
+apt update
+apt install dnsutils -y
+```
+
+
+
+
 > Untuk mempermudah mendapatkan informasi mengenai misi dari Handler, bantulah Loid membuat website utama dengan akses wise.yyy.com dengan alias www.wise.yyy.com pada folder wise (2).
 
 ## 3
