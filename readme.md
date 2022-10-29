@@ -126,15 +126,133 @@ apt install dnsutils -y
 
 ## 4
 > Buat juga reverse domain untuk domain utama (4).
+### Reverse Domain
+#### Pada WISE
+```
+nano /etc/bind/named.conf.local
+
+zone "2.3.30.10.in-addr.arpa" {
+    type master;
+    file "/etc/bind/wise/2.3.30.10.in-addr.arpa";
+};
+
+cp /etc/bind/db.local /etc/bind/wise/2.3.30.10.in-addr.arpa
+```
+
+#### Host pada Client
+```
+apt-get update
+
+apt-get install dnsutils
+
+host -t PTR 10.30.3.2
+```
 
 ## 5
 > Agar dapat tetap dihubungi jika server WISE bermasalah, buatlah juga Berlint sebagai DNS Slave untuk domain utama (5).
 
+### Konfigurasi Berlint Sebagai DNS Slave
+#### Pada WISE
+```
+nano /etc/bind/named.conf.local
+
+zone "wise.f03.com" {
+    type master;
+    notify yes;
+    also-notify {10.30.2.2;};
+    allow-transfer {10.30.2.2;};
+    file "/etc/bind/wise/wise.f03.com";
+};
+
+service bind9 restart
+```
+
+#### Pada Berlint
+```
+apt-get update
+
+apt-get install bind9 -y
+
+nano /etc/bind/named.conf.local
+
+zone "wise.f03.com" {
+    type slave;
+    masters {10.30.3.2;};
+    file "/var/lib/bind/wise.f03.com";
+};
+
+service bind9 restart
+```
+
+
 ## 6
 > Karena banyak informasi dari Handler, buatlah subdomain yang khusus untuk operation yaitu operation.wise.yyy.com dengan alias www.operation.wise.yyy.com yang didelegasikan dari WISE ke Berlint dengan IP menuju ke Eden dalam folder operation (6).
 
+### Membuat Subdomain
+#### Pada Wise 
+```
+nano /etc/bind/wise/wise.f03.com
+
+ns1  IN   A   10.30.2.2 ; IP Berlint
+operation IN    NS  ns1
+
+
+nano /etc/bind/named.conf.options
+allow-query{any;};
+
+service bind9 restart
+```
+
+#### Pada Berlint
+```
+nano /etc/bind/named.conf.options
+
+allow-query{any;};
+
+nano /etc/bind/named.conf.local
+
+diganti menjadi = operation.wise.f03.com
+
+cp /etc/bind/db.local /etc/bind/wise/operation.wise.f03.com
+
+nano /etc/bind/wise/operation.wise.f03.com
+
+operation.wise.f03.com. IN SOA operation.wise.f03.com. root.operation.wise.f03.com. (
+ 2022100601 ; serial -> 2 ; serial
+ 604800 ; refresh
+ 86400 ; retry
+ 2419200 ; expire
+ 604800 ; minimum ttl
+)
+@ IN NS operation.wise.f03.com.
+@ IN A  10.30.2.2 ; IP Berlint
+
+service bind9 restart
+
+ping operation.wise.f03.com -c 5
+```
+
 ## 7 
 > Untuk informasi yang lebih spesifik mengenai Operation Strix, buatlah subdomain melalui Berlint dengan akses strix.operation.wise.yyy.com dengan alias www.strix.operation.wise.yyy.com yang mengarah ke Eden (7).
+
+```
+nano /etc/bind/operation/operation.wise.f03.com
+
+operation.wise.f03.com. IN SOA operation.wise.f03.com. root.operation.wise.f03.com. (
+ 2022100601 ; serial -> 2 ; serial
+ 604800 ; refresh
+ 86400 ; retry
+ 2419200 ; expire
+ 604800 ; minimum ttl
+)
+@ IN NS operation.wise.f03.com.
+@ IN A  10.30.2.2 ; IP Berlint
+strix IN A  10.30.2.2 ; IP Berlint
+
+service bind9 restart
+
+ping strix.operation.wise.f03.com -c 5
+```
 
 ## 8 
 > Setelah melakukan konfigurasi server, maka dilakukan konfigurasi Webserver. Pertama dengan webserver www.wise.yyy.com. Pertama, Loid membutuhkan webserver dengan DocumentRoot pada /var/www/wise.yyy.com (8).
