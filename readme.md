@@ -74,7 +74,7 @@ apt install bind9 -y
 
 
 **Web server network configuration Eden:**
-## 2
+
 ```
 auto eth0
 iface eth0 inet static
@@ -118,7 +118,7 @@ apt install dnsutils -y
 
 
 
-
+## 2
 > Untuk mempermudah mendapatkan informasi mengenai misi dari Handler, bantulah Loid membuat website utama dengan akses wise.yyy.com dengan alias www.wise.yyy.com pada folder wise (2).
 
 ## 3
