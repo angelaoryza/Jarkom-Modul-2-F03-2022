@@ -2,11 +2,11 @@
 
 ### Kelompok F03
 
-| **No** | **Nama**                   | **NRP**    |
-| ------ | -------------------------- | ---------- |
-| 1      | Naufal Fabian Wibowo    | 05111940000223 |
-| 2      | Angela Oryza Prabowo          | 5025201022 |
-| 3      | Helmi Taqiyuddin | 5025201152 |
+| **No** | **Nama**                   | **NRP**    | **Pembagian Pekerjaan** |
+| ------ | -------------------------- | ---------- | ----------------------- |
+| 1      | Naufal Fabian Wibowo    | 05111940000223 | Mengerjakan Lapres |
+| 2      | Angela Oryza Prabowo          | 5025201022 | Mengerjakan No 1-7, Menambahkan Dokumentasi |
+| 3      | Helmi Taqiyuddin | 5025201152 | Mengerjakan Lapres |
 
 ``` IP Kelompok F03 = 10.30``` 
 
